@@ -1,59 +1,38 @@
 import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
-const min = 2;
-let primes = [];
-function generatePrimes(start, range) {
-	let isPrime = true;
-	let end = start + range;
-	for (let i = start; i < end; i++) {
-		for (let j = min; j < Math.sqrt(end); j++) {
-			if (i !== j && i % j === 0) {
-				isPrime = false;
-				break;
-			}
-		}
-		if (isPrime) {
-			primes.push(i);
-		}
-		isPrime = true;
-	}
-}
-if (isMainThread) {
-	const max = 1e7;
-	const threadCount = +process.argv[2] || 2;
-	const threads = new Set();
-	console.log(`Running with ${threadCount} threads...`);
-	const range = Math.ceil((max - min) / threadCount);
-	let start = min;
-	for (let i = 0; i < threadCount - 1; i++) {
-		const myStart = start;
+import getProduct from './get-product.js';
+
+export function assignWorkers(asinCodes) {
+	const threads = [];
+	let productData = [];
+
+	console.log(asinCodes);
+
+	for (let asin of asinCodes) {
 		threads.add(
 			new Worker('./src/lib/product-worker.js', {
-				workerData: { start: myStart, range },
+				workerData: { asin: asin },
 			}),
 		);
-		start += range;
 	}
-	threads.add(
-		new Worker('./src/lib/product-worker.js', {
-			workerData: { start, range: range + ((max - min + 1) % threadCount) },
-		}),
-	);
+
+	console.log(`Running with ${threads.length} threads...`);
+
 	for (let worker of threads) {
 		worker.on('error', (err) => {
 			throw err;
 		});
+
 		worker.on('exit', () => {
-			threads.delete(worker);
-			console.log(`Thread exiting, ${threads.size} running...`);
-			if (threads.size === 0) {
-				console.log(primes.join('\n'));
+			threads.splice(threads.indexOf(worker), 1);
+			console.log(`Thread exiting, ${threads.length} running...`);
+
+			if (threads.length === 0) {
+				console.log(productData);
 			}
 		});
+
 		worker.on('message', (msg) => {
-			primes = msg;
+			productData.push(msg);
 		});
 	}
-} else {
-	generatePrimes(workerData.start, workerData.range);
-	parentPort.postMessage(primes);
 }

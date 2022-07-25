@@ -13,8 +13,8 @@ export default async function getProduct(asin) {
 	});
 
 	const page = await browser.newPage();
-	await page.goto(`https://www.amazon.com/dp/${asin}`);
-	await page.waitForSelector('#productTitle');
+	await page.goto(`https://amazon.com/dp/${asin}`);
+	await page.waitForSelector('div#titleSection', { visible: true });
 
 	const product = Object.assign(
 		{ id: nanoid() },
@@ -27,9 +27,9 @@ export default async function getProduct(asin) {
 				imageUrl: document.body.querySelector('img#landingImage').src,
 				price: document.body.querySelector('span.a-offscreen').innerText,
 
-				description:
-					document.body.querySelector('#productDescription').innerText ??
-					document.body.querySelector('#feature-bullets').innerText,
+				description: document.body.querySelector('#productDescription')
+					? document.body.querySelector('#productDescription').innerText
+					: document.body.querySelector('#feature-bullets').innerText,
 
 				reviews: [
 					...document.body.querySelectorAll('div[data-hook="review"]'),
@@ -69,3 +69,5 @@ export default async function getProduct(asin) {
 
 	return product;
 }
+
+console.log(await getProduct('B09B1BQR3V'));

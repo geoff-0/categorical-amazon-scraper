@@ -1,16 +1,16 @@
-import { assignWorker } from './lib/workers-handler.js';
+import { assignWorkers } from './lib/workers-handler.js';
 import getAsins from './lib/get-asins.js';
 import { categories } from '../cas.config.js';
 import fs from 'fs';
 
 export default async function run(categories, path) {
-	for (let category of Object.keys(categories)) {
-		let dir = `${path}/product_data`;
-		try {
-			if (!fs.existsSync(dir)) {
-				fs.mkdirSync(dir);
-			}
+	let dir = `${path}/product_data`;
+	if (!fs.existsSync(dir)) {
+		fs.mkdirSync(dir);
+	}
 
+	for (let category of Object.keys(categories)) {
+		try {
 			if (!fs.existsSync(dir + `/${category}`)) {
 				fs.mkdirSync(dir + `/${category}`);
 			}
@@ -18,27 +18,15 @@ export default async function run(categories, path) {
 			console.error(err);
 		}
 
-		for (let subcategory of Object.values(categories)) {
-			if (Array.isArray(subcategory)) {
+		for (let subcategory of Object.keys(categories)) {
+			console.log(subcategory);
+			if (Array.isArray(categories[subcategory])) {
 				try {
 					const asinCodes = await getAsins(subcategory);
-					console.log(asinCodes);
-					const productData = [];
 
-					for (let asin of asinCodes) {
-						const worker = await assignWorker(asin);
-						console.log(worker);
-						productData.push(worker);
-					}
+					const productData = assignWorkers(asinCodes);
 
 					console.log(productData);
-
-					fs.writeFileSync(
-						`${dir}/${category}/${subcategory
-							.replace(/\s/g, '')
-							.replace("'", '')}_ProductData.json`,
-						JSON.stringify(productData),
-					);
 				} catch (err) {
 					return console.error(err);
 				}
