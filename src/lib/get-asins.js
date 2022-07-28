@@ -14,7 +14,9 @@ export default async function getAsins(category) {
 	});
 
 	const page = await browser.newPage();
-	await page.goto(`https://amazon.com/s?k=${category}`);
+
+	const res = await page.goto(`https://amazon.com/s?k=${category}`);
+	console.log(res.headers());
 	await page.waitForSelector('body');
 
 	const codes = await page.evaluate(() => {
@@ -34,7 +36,9 @@ export default async function getAsins(category) {
 
 	await browser.close();
 
+	console.log(codes.length);
+
 	return codes;
 }
 
-console.log(await getAsins('among us'));
+await getAsins('among us doll');

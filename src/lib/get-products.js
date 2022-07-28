@@ -4,25 +4,23 @@ import getAsins from './get-asins.js';
 import { Cluster } from 'puppeteer-cluster';
 
 export default async function getProducts(asins) {
-	var products = [];
+	let products = [];
 
 	const cluster = await Cluster.launch({
 		concurrency: Cluster.CONCURRENCY_CONTEXT,
-		maxConcurrency: 3,
+		maxConcurrency: 8,
 	});
 
-	await cluster.task(async ({ page, data: url }) => {
-		console.log('new scrape started');
-
-		await page.goto(url, {
-			waitUntil: 'networkidle2',
-		});
+	await cluster.task(async ({ page, data }) => {
+		const response = await page.goto(data.url);
+		// const headers = response.headers();
+		// console.log(headers);
 
 		await page.waitForSelector('#productTitle');
 
 		const product = Object.assign(
 			{ id: nanoid() },
-			page.evaluate(() => {
+			await page.evaluate(() => {
 				const title = document.body
 					.querySelector('#productTitle')
 					.innerText.replace('Amazon', '')
@@ -71,21 +69,24 @@ export default async function getProducts(asins) {
 					};
 				});
 
-				return {
+				console.log(`URL: ${data.url}`);
+				console.log(`TITLE: ${product.title}\n`);
+
+				return products.push({
 					title: title,
 					imageUrl: imageUrl,
 					price: price,
 					description: description,
 					reviews: reviews,
-				};
+				});
 			}),
 		);
 
-		console.log(`TITLE: ${product.title}`);
-		products.push(product);
+		return product;
 	});
 
-	asins.map((asin) => cluster.queue(`https://amazon.com/dp/${asin}`));
+	for (let asin of asins)
+		cluster.queue({ url: `https://amazon.com/dp/${asin}` });
 
 	await cluster.idle();
 	await cluster.close();
@@ -93,4 +94,7 @@ export default async function getProducts(asins) {
 	return products;
 }
 
-await getProducts(await getAsins('among us doll'));
+const asinCodes = await getAsins('Gaming Laptop');
+console.log(asinCodes);
+const products = await getProducts(asinCodes);
+console.log(products.length);
