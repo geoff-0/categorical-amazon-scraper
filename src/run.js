@@ -1,6 +1,6 @@
-import { assignWorkers } from './lib/workers-handler.js';
 import getAsins from './lib/get-asins.js';
 import { categories } from '../cas.config.js';
+import getProducts from './lib/get-products.js';
 import fs from 'fs';
 
 export default async function run(categories, path) {
@@ -19,17 +19,31 @@ export default async function run(categories, path) {
 		}
 
 		for (let subcategory of Object.keys(categories)) {
-			console.log(subcategory);
 			if (Array.isArray(categories[subcategory])) {
-				try {
-					const asinCodes = await getAsins(subcategory);
+				const asinCodes = await getAsins(subcategory);
+				console.log(asinCodes);
 
-					const productData = assignWorkers(asinCodes);
+				const products = await getProducts(asinCodes);
 
-					console.log(productData);
-				} catch (err) {
-					return console.error(err);
-				}
+				await products;
+
+				await fs.writeFile(
+					`${dir}/${category}/${subcategory}_product-data.json`,
+					JSON.stringify(products),
+					(err) => {
+						if (err) console.log(err);
+						else {
+							console.log('File written successfully\n');
+							console.log('The written has the following contents:');
+							console.log(
+								fs.readFileSync(
+									`${dir}/${category}/${subcategory}_product-data.json`,
+									'utf8',
+								),
+							);
+						}
+					},
+				);
 			}
 		}
 	}
