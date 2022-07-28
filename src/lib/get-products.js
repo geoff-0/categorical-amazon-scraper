@@ -1,4 +1,3 @@
-import puppeteer from 'puppeteer';
 import { nanoid } from 'nanoid';
 import getAsins from './get-asins.js';
 import { Cluster } from 'puppeteer-cluster';
@@ -12,7 +11,7 @@ export default async function getProducts(asins) {
 	});
 
 	await cluster.task(async ({ page, data }) => {
-		const response = await page.goto(data.url);
+		const response = await page.goto(`https://amazon.com/dp/${data.asin}`);
 		// const headers = response.headers();
 		// console.log(headers);
 
@@ -69,24 +68,22 @@ export default async function getProducts(asins) {
 					};
 				});
 
-				console.log(`URL: ${data.url}`);
-				console.log(`TITLE: ${product.title}\n`);
-
-				return products.push({
+				return {
 					title: title,
 					imageUrl: imageUrl,
 					price: price,
 					description: description,
 					reviews: reviews,
-				});
+				};
 			}),
 		);
 
-		return product;
+		console.log(`ASIN: ${data.asin}`);
+		console.log(`TITLE: ${product.title}\n`);
+		products.push(product);
 	});
 
-	for (let asin of asins)
-		cluster.queue({ url: `https://amazon.com/dp/${asin}` });
+	for (let asin of asins) cluster.queue({ asin: asin });
 
 	await cluster.idle();
 	await cluster.close();

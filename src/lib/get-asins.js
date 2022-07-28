@@ -5,18 +5,17 @@ export default async function getAsins(category) {
 	const agent = new UserAgent().toString();
 	const browser = await puppeteer.launch({
 		headless: true,
-		args: [
-			'--no-sandbox',
-			'--disable-setuid-sandbox',
-			'--window-size=1920,1080',
-			agent,
-		],
+		args: ['--window-size=1920,1080', agent],
 	});
 
-	const page = await browser.newPage();
+	const context = await browser.createIncognitoBrowserContext();
 
-	const res = await page.goto(`https://amazon.com/s?k=${category}`);
-	console.log(res.headers());
+	const page = await context.newPage();
+
+	await page.goto(`https://amazon.com/s?k=${category}`, {
+		waitUntil: 'networkidle2',
+	});
+
 	await page.waitForSelector('body');
 
 	const codes = await page.evaluate(() => {
@@ -36,9 +35,5 @@ export default async function getAsins(category) {
 
 	await browser.close();
 
-	console.log(codes.length);
-
 	return codes;
 }
-
-await getAsins('among us doll');
