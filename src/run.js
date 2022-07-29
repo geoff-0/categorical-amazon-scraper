@@ -1,7 +1,7 @@
-import getAsins from './lib/get-asins.js';
-import { categories } from '../cas.config.js';
-import getProducts from './lib/get-products.js';
-import fs from 'fs';
+import getAsins from "./lib/get-asins.js";
+import { categories } from "../cas.config.js";
+import getProducts from "./lib/get-products.js";
+import fs from "fs";
 
 export default async function run(categories, path) {
 	let dir = `${path}/product_data`;
@@ -19,37 +19,34 @@ export default async function run(categories, path) {
 		}
 
 		for (let subcategory of Object.keys(categories)) {
-			if (Array.isArray(categories[subcategory])) {
-				const asinCodes = await getAsins(subcategory);
-				console.log(asinCodes);
+			for (let subcategorySection of Object.keys(
+				Object.values(categories[subcategory]),
+			)) {
+				if (Array.isArray(categories[subcategory][subcategorySection])) {
+					const asinCodes = await getAsins(
+						categories[subcategory][subcategorySection],
+					);
+					console.log(asinCodes);
+					console.log(categories[subcategory][subcategorySection]);
 
-				const products = await getProducts(asinCodes);
+					const products = await getProducts(asinCodes);
 
-				await products;
-
-				await fs.writeFile(
-					`${dir}/${category}/${subcategory}_product-data.json`,
-					JSON.stringify(products),
-					(err) => {
-						if (err) console.log(err);
-						else {
-							console.log('File written successfully\n');
-							console.log('The written has the following contents:');
-							console.log(
-								fs.readFileSync(
-									`${dir}/${category}/${subcategory}_product-data.json`,
-									'utf8',
-								),
-							);
-						}
-					},
-				);
+					fs.writeFile(
+						`${dir}/${category}/${subcategory}/${subcategorySection}_product-data.json`,
+						JSON.stringify(products),
+						(err) => {
+							if (err) console.log(err);
+							else {
+								console.log(
+									`${dir}/${category}/${subcategory}/${subcategorySection}_product-data.json written successfully\n`,
+								);
+							}
+						},
+					);
+				}
 			}
 		}
 	}
 }
 
-await run(
-	categories,
-	'/home/geoday/code/projects/categorical-amazon-scraper/src',
-);
+await run(categories, "/home/geoday/code/projects/feigne/src/data");
