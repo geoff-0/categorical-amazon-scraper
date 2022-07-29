@@ -19,10 +19,10 @@ export default async function run(categories, path) {
 		}
 
 		for (let subcategory of Object.keys(categories)) {
-			for (let subcategorySection of Object.keys(
-				Object.values(categories[subcategory]),
-			)) {
-				if (Array.isArray(categories[subcategory][subcategorySection])) {
+			if (Array.isArray(categories[subcategory])) {
+				for (let subcategorySection of Object.keys(
+					Object.values(categories[subcategory]),
+				)) {
 					const asinCodes = await getAsins(
 						categories[subcategory][subcategorySection],
 					);
