@@ -4,6 +4,34 @@ import getProducts from "./lib/get-products.js";
 import fs from "fs";
 
 export default async function run(categories, path) {
+	const generateFromArray = async (subcategory) => {
+		for (let category of subcategory) {
+			const asinCodes = await getAsins(category);
+			const data = await getProducts(asinCodes);
+
+			fs.writeFile(
+				`${dir}/${subcategory[0]}/${category.replace(
+					/\s/g,
+					"",
+				)}_product-data.json`,
+
+				JSON.stringify(data),
+
+				(err) => {
+					if (err) console.log(err);
+					else {
+						console.log(
+							`${dir}/${subcategory[0]}/${category.replace(
+								/\s/g,
+								"",
+							)}_product-data.json written successfully\n`,
+						);
+					}
+				},
+			);
+		}
+	};
+
 	let dir = `${path}/product_data`;
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir);
@@ -17,34 +45,15 @@ export default async function run(categories, path) {
 		} catch (err) {
 			console.error(err);
 		}
+	}
 
-		for (let subcategory of Object.keys(categories)) {
-			if (Array.isArray(categories[subcategory])) {
-				for (let subcategorySection of Object.keys(
-					Object.values(categories[subcategory]),
-				)) {
-					const asinCodes = await getAsins(
-						categories[subcategory][subcategorySection],
-					);
-					console.log(asinCodes);
-					console.log(categories[subcategory][subcategorySection]);
-
-					const products = await getProducts(asinCodes);
-
-					fs.writeFile(
-						`${dir}/${category}/${subcategory}/${subcategorySection}_product-data.json`,
-						JSON.stringify(products),
-						(err) => {
-							if (err) console.log(err);
-							else {
-								console.log(
-									`${dir}/${category}/${subcategory}/${subcategorySection}_product-data.json written successfully\n`,
-								);
-							}
-						},
-					);
-				}
-			}
+	for (let subcategory of Object.entries(categories)) {
+		if (Array.isArray(subcategory[1])) {
+			generateFromArray(subcategory[1]);
+		} else if (
+			typeof subcategory[1] === "object" &&
+			typeof subcategory[1] !== null
+		) {
 		}
 	}
 }
