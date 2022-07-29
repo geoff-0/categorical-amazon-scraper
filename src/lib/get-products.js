@@ -7,7 +7,7 @@ export default async function getProducts(asins) {
 
 	const cluster = await Cluster.launch({
 		concurrency: Cluster.CONCURRENCY_CONTEXT,
-		maxConcurrency: 8,
+		maxConcurrency: 10,
 	});
 
 	await cluster.task(async ({ page, data }) => {
@@ -90,8 +90,3 @@ export default async function getProducts(asins) {
 
 	return products;
 }
-
-const asinCodes = await getAsins('Gaming Laptop');
-console.log(asinCodes);
-const products = await getProducts(asinCodes);
-console.log(products.length);

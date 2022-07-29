@@ -2,9 +2,8 @@ import puppeteer from 'puppeteer';
 import UserAgent from 'user-agents';
 
 export default async function getAsins(category) {
-	const agent = new UserAgent().toString();
+	const agent = new UserAgent({ deviceCategory: 'desktop' }).toString();
 	const browser = await puppeteer.launch({
-		headless: true,
 		args: ['--window-size=1920,1080', agent],
 	});
 
@@ -12,9 +11,11 @@ export default async function getAsins(category) {
 
 	const page = await context.newPage();
 
-	await page.goto(`https://amazon.com/s?k=${category}`, {
+	const res = await page.goto(`https://amazon.com/s?k=${category}`, {
 		waitUntil: 'networkidle2',
 	});
+
+	console.log(res.headers());
 
 	await page.waitForSelector('body');
 
@@ -32,6 +33,8 @@ export default async function getAsins(category) {
 
 		return results;
 	});
+
+	await context.close();
 
 	await browser.close();
 
