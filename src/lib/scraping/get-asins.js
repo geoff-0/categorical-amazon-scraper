@@ -34,26 +34,54 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import generateData from "./lib/generate-data.js";
-var dict = {
-    clothing: {
-        men: {
-            jackets: "Men's jackets",
-            shirts: "Men's Shirts",
-            pants: "Men's Pants",
-        },
-        women: {
-            jackets: "Women's jackets",
-            shirts: "Women's Shirts",
-            pants: "Women's Pants",
-        },
-    },
-};
-(function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, generateData(dict, "/home/geoday/code/projects/categorical-amazon-scraper/src")];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
+import puppeteer from "puppeteer";
+import UserAgent from "user-agents";
+export default function getAsins(category, limit) {
+    return __awaiter(this, void 0, void 0, function () {
+        var agent, browser, context, page, res, codes;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    agent = new UserAgent({ deviceCategory: "desktop" }).toString();
+                    return [4 /*yield*/, puppeteer.launch({
+                            args: ["--window-size=1920,1080", agent],
+                        })];
+                case 1:
+                    browser = _a.sent();
+                    return [4 /*yield*/, browser.createIncognitoBrowserContext()];
+                case 2:
+                    context = _a.sent();
+                    return [4 /*yield*/, context.newPage()];
+                case 3:
+                    page = _a.sent();
+                    return [4 /*yield*/, page.goto("https://amazon.com/s?k=".concat(category), {
+                            waitUntil: "networkidle2",
+                        })];
+                case 4:
+                    res = _a.sent();
+                    return [4 /*yield*/, page.waitForSelector("body")];
+                case 5:
+                    _a.sent();
+                    return [4 /*yield*/, page.evaluate(function (limit) {
+                            var results = [];
+                            var searchResults = document.body.querySelectorAll("div.s-result-item");
+                            for (var i = 0; i < limit; i++) {
+                                var asin = searchResults[i].getAttribute("data-asin") || "";
+                                if (!results.includes(asin) && asin[0])
+                                    results.push(asin);
+                            }
+                            return results;
+                        }, limit)];
+                case 6:
+                    codes = _a.sent();
+                    return [4 /*yield*/, context.close()];
+                case 7:
+                    _a.sent();
+                    return [4 /*yield*/, browser.close()];
+                case 8:
+                    _a.sent();
+                    return [2 /*return*/, codes];
+            }
+        });
     });
-}); })();
+}

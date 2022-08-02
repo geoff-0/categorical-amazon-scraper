@@ -34,26 +34,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import generateData from "./lib/generate-data.js";
-var dict = {
-    clothing: {
-        men: {
-            jackets: "Men's jackets",
-            shirts: "Men's Shirts",
-            pants: "Men's Pants",
-        },
-        women: {
-            jackets: "Women's jackets",
-            shirts: "Women's Shirts",
-            pants: "Women's Pants",
-        },
-    },
-};
-(function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, generateData(dict, "/home/geoday/code/projects/categorical-amazon-scraper/src")];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
+export default function traverseSubcategories(node, process, root) {
+    return __awaiter(this, void 0, void 0, function () {
+        var key;
+        return __generator(this, function (_a) {
+            for (key in node) {
+                process(node[key], root);
+                traverseSubcategories(node[key], process, root);
+            }
+            return [2 /*return*/];
+        });
     });
-}); })();
+}
