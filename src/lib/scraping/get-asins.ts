@@ -10,12 +10,9 @@ export default async function getAsins(category: string, limit: number) {
 
 	const page = await browser.newPage();
 
-	const res = await page.goto(
-		`https://amazon.com/s?k=${category.replaceAll(" ", "+")}`,
-		{
-			waitUntil: "networkidle2",
-		},
-	);
+	const res = await page.goto(`https://amazon.com/s?k=${category}`, {
+		waitUntil: "networkidle2",
+	});
 
 	console.log("GET_ASIN", res?.status());
 
@@ -37,8 +34,6 @@ export default async function getAsins(category: string, limit: number) {
 
 		return results;
 	}, limit);
-
-	console.log(codes);
 
 	await browser.close();
 

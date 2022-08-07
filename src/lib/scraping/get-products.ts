@@ -6,7 +6,7 @@ export default async function getProducts(asins: string[]) {
 
 	const cluster = await Cluster.launch({
 		concurrency: Cluster.CONCURRENCY_CONTEXT,
-		maxConcurrency: 6,
+		maxConcurrency: 15,
 	});
 
 	await cluster.task(async ({ page, data }) => {
@@ -126,7 +126,7 @@ export default async function getProducts(asins: string[]) {
 		products.push(product);
 	});
 
-	for (const asin of asins) cluster.queue({ asin: asin });
+	for (const asin of asins) await cluster.queue({ asin: asin });
 
 	await cluster.idle();
 	await cluster.close();

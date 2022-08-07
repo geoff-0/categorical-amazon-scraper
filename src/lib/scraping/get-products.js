@@ -46,7 +46,7 @@ export default function getProducts(asins) {
                     products = [];
                     return [4 /*yield*/, Cluster.launch({
                             concurrency: Cluster.CONCURRENCY_CONTEXT,
-                            maxConcurrency: 6,
+                            maxConcurrency: 15,
                         })];
                 case 1:
                     cluster = _a.sent();
@@ -129,15 +129,23 @@ export default function getProducts(asins) {
                         })];
                 case 2:
                     _a.sent();
-                    for (_i = 0, asins_1 = asins; _i < asins_1.length; _i++) {
-                        asin = asins_1[_i];
-                        cluster.queue({ asin: asin });
-                    }
-                    return [4 /*yield*/, cluster.idle()];
+                    _i = 0, asins_1 = asins;
+                    _a.label = 3;
                 case 3:
+                    if (!(_i < asins_1.length)) return [3 /*break*/, 6];
+                    asin = asins_1[_i];
+                    return [4 /*yield*/, cluster.queue({ asin: asin })];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5:
+                    _i++;
+                    return [3 /*break*/, 3];
+                case 6: return [4 /*yield*/, cluster.idle()];
+                case 7:
                     _a.sent();
                     return [4 /*yield*/, cluster.close()];
-                case 4:
+                case 8:
                     _a.sent();
                     return [2 /*return*/, products];
             }

@@ -51,7 +51,7 @@ export default function getAsins(category, limit) {
                     return [4 /*yield*/, browser.newPage()];
                 case 2:
                     page = _a.sent();
-                    return [4 /*yield*/, page.goto("https://amazon.com/s?k=".concat(category.replaceAll(" ", "+")), {
+                    return [4 /*yield*/, page.goto("https://amazon.com/s?k=".concat(category), {
                             waitUntil: "networkidle2",
                         })];
                 case 3:
@@ -73,7 +73,6 @@ export default function getAsins(category, limit) {
                         }, limit)];
                 case 5:
                     codes = _a.sent();
-                    console.log(codes);
                     return [4 /*yield*/, browser.close()];
                 case 6:
                     _a.sent();
