@@ -41,62 +41,46 @@ import { productLimit } from "../../cas.config.js";
 import traverseSubcategories from "./traverse-subcategories.js";
 export default function handleProcess(node, root) {
     return __awaiter(this, void 0, void 0, function () {
-        function camelize(str) {
-            return str
-                .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
-                return index === 0 ? word.toLowerCase() : word.toUpperCase();
-            })
-                .replace(/\s+/g, "");
-        }
-        var _a, _b, _i, key, path, _c, node_1, category, asinCodes, products;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var _i, node_1, category, asinCodes, products;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
                     if (!(typeof (node !== null) &&
                         typeof (node === "object") &&
-                        !Array.isArray(node))) return [3 /*break*/, 5];
-                    _a = [];
-                    for (_b in node)
-                        _a.push(_b);
-                    _i = 0;
-                    _d.label = 1;
+                        !Array.isArray(node))) return [3 /*break*/, 2];
+                    console.log("object category of node: ".concat(node));
+                    if (!existsSync(root))
+                        mkdirSync(root);
+                    return [4 /*yield*/, traverseSubcategories(node, handleProcess, root)];
                 case 1:
-                    if (!(_i < _a.length)) return [3 /*break*/, 4];
-                    key = _a[_i];
-                    path = "".concat(root, "/").concat(key);
-                    if (!existsSync(path))
-                        mkdirSync(path);
-                    return [4 /*yield*/, handleProcess(node[key], path)];
+                    _a.sent();
+                    return [3 /*break*/, 7];
                 case 2:
-                    _d.sent();
-                    traverseSubcategories(node[key], handleProcess, root);
-                    _d.label = 3;
-                case 3:
-                    _i++;
-                    return [3 /*break*/, 1];
-                case 4: return [3 /*break*/, 10];
-                case 5:
                     if (!(typeof (node !== null) &&
                         typeof (node === "array") &&
-                        Array.isArray(node))) return [3 /*break*/, 10];
-                    _c = 0, node_1 = node;
-                    _d.label = 6;
-                case 6:
-                    if (!(_c < node_1.length)) return [3 /*break*/, 10];
-                    category = node_1[_c];
+                        Array.isArray(node))) return [3 /*break*/, 7];
+                    if (!existsSync(root))
+                        mkdirSync(root);
+                    _i = 0, node_1 = node;
+                    _a.label = 3;
+                case 3:
+                    if (!(_i < node_1.length)) return [3 /*break*/, 7];
+                    category = node_1[_i];
                     console.log("array category of node: ".concat(category));
                     return [4 /*yield*/, getAsins(category, productLimit)];
-                case 7:
-                    asinCodes = _d.sent();
+                case 4:
+                    asinCodes = _a.sent();
                     return [4 /*yield*/, getProducts(asinCodes)];
-                case 8:
-                    products = _d.sent();
-                    writeFileSync("".concat(root, "/").concat(camelize(category).replace("'", ""), "_Product-Data.json"), JSON.stringify(products));
-                    _d.label = 9;
-                case 9:
-                    _c++;
-                    return [3 /*break*/, 6];
-                case 10: return [2 /*return*/];
+                case 5:
+                    products = _a.sent();
+                    writeFileSync("".concat(root, "/").concat(category
+                        .replace(/\s+/g, "-")
+                        .replace("'", ""), "_Product-Data.json"), JSON.stringify(products));
+                    _a.label = 6;
+                case 6:
+                    _i++;
+                    return [3 /*break*/, 3];
+                case 7: return [2 /*return*/];
             }
         });
     });

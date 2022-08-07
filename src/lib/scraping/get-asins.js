@@ -38,47 +38,44 @@ import puppeteer from "puppeteer";
 import UserAgent from "user-agents";
 export default function getAsins(category, limit) {
     return __awaiter(this, void 0, void 0, function () {
-        var agent, browser, context, page, res, codes;
+        var agent, browser, page, res, codes;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     agent = new UserAgent({ deviceCategory: "desktop" }).toString();
                     return [4 /*yield*/, puppeteer.launch({
-                            args: ["--window-size=1920,1080", agent],
+                            args: ["--window-size=1920,1080", agent, "--incognito"],
                         })];
                 case 1:
                     browser = _a.sent();
-                    return [4 /*yield*/, browser.createIncognitoBrowserContext()];
+                    return [4 /*yield*/, browser.newPage()];
                 case 2:
-                    context = _a.sent();
-                    return [4 /*yield*/, context.newPage()];
-                case 3:
                     page = _a.sent();
-                    return [4 /*yield*/, page.goto("https://amazon.com/s?k=".concat(category), {
+                    return [4 /*yield*/, page.goto("https://amazon.com/s?k=".concat(category.replaceAll(" ", "+")), {
                             waitUntil: "networkidle2",
                         })];
-                case 4:
+                case 3:
                     res = _a.sent();
+                    console.log("GET_ASIN", res === null || res === void 0 ? void 0 : res.status());
                     return [4 /*yield*/, page.waitForSelector("body")];
-                case 5:
+                case 4:
                     _a.sent();
                     return [4 /*yield*/, page.evaluate(function (limit) {
                             var results = [];
                             var searchResults = document.body.querySelectorAll("div.s-result-item");
-                            for (var i = 0; i < limit; i++) {
-                                var asin = searchResults[i].getAttribute("data-asin") || "";
-                                if (!results.includes(asin) && asin[0])
+                            var l = searchResults.length - limit >= 0 ? limit : searchResults.length;
+                            for (var i = 0; i < l; i++) {
+                                var asin = searchResults[i].getAttribute("data-asin") || "B08R25S1Q5";
+                                if (!results.includes(asin))
                                     results.push(asin);
                             }
                             return results;
                         }, limit)];
-                case 6:
+                case 5:
                     codes = _a.sent();
-                    return [4 /*yield*/, context.close()];
-                case 7:
-                    _a.sent();
+                    console.log(codes);
                     return [4 /*yield*/, browser.close()];
-                case 8:
+                case 6:
                     _a.sent();
                     return [2 /*return*/, codes];
             }

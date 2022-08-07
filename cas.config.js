@@ -13,4 +13,4 @@ export var categories = {
         women: ["Women's jackets", "Women's Shirts", "Women's Pants"],
     },
 };
-export var productLimit = 3;
+export var productLimit = 35;

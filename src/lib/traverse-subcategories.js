@@ -39,8 +39,7 @@ export default function traverseSubcategories(node, process, root) {
         var key;
         return __generator(this, function (_a) {
             for (key in node) {
-                process(node[key], root);
-                traverseSubcategories(node[key], process, root);
+                process.apply(this, [node[key], "".concat(root, "/").concat(key)]);
             }
             return [2 /*return*/];
         });

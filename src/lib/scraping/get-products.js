@@ -46,25 +46,26 @@ export default function getProducts(asins) {
                     products = [];
                     return [4 /*yield*/, Cluster.launch({
                             concurrency: Cluster.CONCURRENCY_CONTEXT,
-                            maxConcurrency: 10,
+                            maxConcurrency: 6,
                         })];
                 case 1:
                     cluster = _a.sent();
                     return [4 /*yield*/, cluster.task(function (_a) {
                             var page = _a.page, data = _a.data;
                             return __awaiter(_this, void 0, void 0, function () {
-                                var response, product, _b, _c, _d;
-                                return __generator(this, function (_e) {
-                                    switch (_e.label) {
-                                        case 0: return [4 /*yield*/, page.goto("https://amazon.com/dp/".concat(data.asin))];
+                                var response, product;
+                                return __generator(this, function (_b) {
+                                    switch (_b.label) {
+                                        case 0: return [4 /*yield*/, page.goto("https://amazon.com/dp/".concat(data.asin), {
+                                                waitUntil: "networkidle2",
+                                            })];
                                         case 1:
-                                            response = _e.sent();
+                                            response = _b.sent();
+                                            console.log("GET_PRODUCT", response === null || response === void 0 ? void 0 : response.status());
                                             return [4 /*yield*/, page.waitForSelector("#productTitle")];
                                         case 2:
-                                            _e.sent();
-                                            _c = (_b = Object).assign;
-                                            _d = [{ id: nanoid() }];
-                                            return [4 /*yield*/, page.evaluate(function () {
+                                            _b.sent();
+                                            return [4 /*yield*/, page.evaluate(function (id) {
                                                     var _a;
                                                     var title = (document.body.querySelector("#productTitle")
                                                         .innerText || "A Product Title")
@@ -108,15 +109,16 @@ export default function getProducts(asins) {
                                                         };
                                                     });
                                                     return {
+                                                        id: id,
                                                         title: title,
                                                         imageUrl: imageUrl,
                                                         price: price,
                                                         description: description,
                                                         reviews: reviews,
                                                     };
-                                                })];
+                                                }, nanoid(6))];
                                         case 3:
-                                            product = _c.apply(_b, _d.concat([_e.sent()]));
+                                            product = _b.sent();
                                             console.log("ASIN: ".concat(data.asin));
                                             console.log("TITLE: ".concat(product.title, "\n"));
                                             products.push(product);

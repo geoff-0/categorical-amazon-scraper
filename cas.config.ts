@@ -14,4 +14,4 @@ export const categories = {
 	},
 };
 
-export const productLimit = 3;
+export const productLimit = 35;
