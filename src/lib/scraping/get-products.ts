@@ -1,15 +1,19 @@
 import { nanoid } from "nanoid";
+import { Page } from "puppeteer";
 import { Cluster } from "puppeteer-cluster";
 
 export default async function getProducts(asins: string[]) {
-	let products: Object[] = [];
-
 	const cluster = await Cluster.launch({
 		concurrency: Cluster.CONCURRENCY_CONTEXT,
-		maxConcurrency: 15,
+		maxConcurrency: 35,
 	});
 
-	await cluster.task(async ({ page, data }) => {
+	const getProduct = async (args: {
+		page: Page;
+		data: { asin: String; products: {}[] };
+	}) => {
+		const { page, data } = args;
+
 		const response = await page.goto(`https://amazon.com/dp/${data.asin}`, {
 			waitUntil: "networkidle2",
 		});
@@ -123,10 +127,13 @@ export default async function getProducts(asins: string[]) {
 
 		console.log(`ASIN: ${data.asin}`);
 		console.log(`TITLE: ${product.title}\n`);
-		products.push(product);
-	});
+		data.products.push(product);
+	};
 
-	for (const asin of asins) await cluster.queue({ asin: asin });
+	const products: Object[] = [];
+
+	for (const asin of asins)
+		cluster.queue({ asin: asin, products: products }, getProduct);
 
 	await cluster.idle();
 	await cluster.close();
