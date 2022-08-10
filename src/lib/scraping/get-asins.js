@@ -56,10 +56,10 @@ export default function getAsins(category, limit) {
                         })];
                 case 3:
                     res = _a.sent();
-                    console.log("GET_ASIN", res === null || res === void 0 ? void 0 : res.status());
-                    return [4 /*yield*/, page.waitForSelector("body")];
+                    return [4 /*yield*/, page.waitForSelector("div.s-result-item")];
                 case 4:
                     _a.sent();
+                    console.log("GET_ASIN", res === null || res === void 0 ? void 0 : res.status());
                     return [4 /*yield*/, page.evaluate(function (limit) {
                             var results = [];
                             var searchResults = document.body.querySelectorAll("div.s-result-item div[data-asin]");
@@ -76,6 +76,7 @@ export default function getAsins(category, limit) {
                     return [4 /*yield*/, browser.close()];
                 case 6:
                     _a.sent();
+                    console.log("ASIN CODES LENGTH ".concat(codes.length));
                     return [2 /*return*/, codes];
             }
         });

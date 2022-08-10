@@ -14,9 +14,9 @@ export default async function getAsins(category: string, limit: number) {
 		waitUntil: "networkidle2",
 	});
 
-	console.log("GET_ASIN", res?.status());
+	await page.waitForSelector("div.s-result-item");
 
-	await page.waitForSelector("body");
+	console.log("GET_ASIN", res?.status());
 
 	const codes = await page.evaluate((limit) => {
 		let results: string[] = [];
@@ -38,6 +38,8 @@ export default async function getAsins(category: string, limit: number) {
 	}, limit);
 
 	await browser.close();
+
+	console.log(`ASIN CODES LENGTH ${codes.length}`);
 
 	return codes;
 }

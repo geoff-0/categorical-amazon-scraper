@@ -10,7 +10,7 @@ export default async function handleProcess(node: [] | {}, root: string) {
 		typeof (node === "object") &&
 		!Array.isArray(node)
 	) {
-		console.log(`object category of node: ${node}`);
+		console.log(`object category of node: ${Object.keys(node)}`);
 		if (!existsSync(root)) mkdirSync(root);
 
 		await traverseSubcategories(node, handleProcess, root);

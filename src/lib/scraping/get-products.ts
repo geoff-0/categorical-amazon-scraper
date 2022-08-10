@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { Page } from "puppeteer";
 import { Cluster } from "puppeteer-cluster";
+import getAsins from "./get-asins.js";
 
 export default async function getProducts(asins: string[]) {
 	const cluster = await Cluster.launch({
@@ -18,7 +19,7 @@ export default async function getProducts(asins: string[]) {
 			waitUntil: "networkidle2",
 		});
 
-		await page.waitForSelector("#productTitle");
+		await page.waitForSelector("#productTitle", { timeout: 30000 });
 
 		console.log("GET_PRODUCT", response?.status());
 
@@ -125,7 +126,7 @@ export default async function getProducts(asins: string[]) {
 			};
 		}, nanoid(6));
 
-		data.products.push(product);
+		return data.products.push(product);
 	};
 
 	const products: Object[] = [];
@@ -136,5 +137,8 @@ export default async function getProducts(asins: string[]) {
 	await cluster.idle();
 	await cluster.close();
 
-	return products.length;
+	return `PRODUCTS ARRAY LENGTH ${products.length}`;
+	// return products;
 }
+
+(async () => console.log(await getProducts(await getAsins("vitamins", 15))))();

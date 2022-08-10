@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import { nanoid } from "nanoid";
 import { Cluster } from "puppeteer-cluster";
+import getAsins from "./get-asins.js";
 export default function getProducts(asins) {
     return __awaiter(this, void 0, void 0, function () {
         var cluster, getProduct, products, _i, asins_1, asin;
@@ -59,7 +60,7 @@ export default function getProducts(asins) {
                                         })];
                                 case 1:
                                     response = _a.sent();
-                                    return [4 /*yield*/, page.waitForSelector("#productTitle")];
+                                    return [4 /*yield*/, page.waitForSelector("#productTitle", { timeout: 30000 })];
                                 case 2:
                                     _a.sent();
                                     console.log("GET_PRODUCT", response === null || response === void 0 ? void 0 : response.status());
@@ -117,8 +118,7 @@ export default function getProducts(asins) {
                                         }, nanoid(6))];
                                 case 3:
                                     product = _a.sent();
-                                    data.products.push(product);
-                                    return [2 /*return*/];
+                                    return [2 /*return*/, data.products.push(product)];
                             }
                         });
                     }); };
@@ -133,8 +133,18 @@ export default function getProducts(asins) {
                     return [4 /*yield*/, cluster.close()];
                 case 3:
                     _a.sent();
-                    return [2 /*return*/, products.length];
+                    return [2 /*return*/, "PRODUCTS ARRAY LENGTH ".concat(products.length)];
             }
         });
     });
 }
+(function () { return __awaiter(void 0, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
+    switch (_d.label) {
+        case 0:
+            _b = (_a = console).log;
+            _c = getProducts;
+            return [4 /*yield*/, getAsins("vitamins", 15)];
+        case 1: return [4 /*yield*/, _c.apply(void 0, [_d.sent()])];
+        case 2: return [2 /*return*/, _b.apply(_a, [_d.sent()])];
+    }
+}); }); })();

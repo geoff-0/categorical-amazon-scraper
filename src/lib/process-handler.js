@@ -48,7 +48,7 @@ export default function handleProcess(node, root) {
                     if (!(typeof (node !== null) &&
                         typeof (node === "object") &&
                         !Array.isArray(node))) return [3 /*break*/, 2];
-                    console.log("object category of node: ".concat(node));
+                    console.log("object category of node: ".concat(Object.keys(node)));
                     if (!existsSync(root))
                         mkdirSync(root);
                     return [4 /*yield*/, traverseSubcategories(node, handleProcess, root)];

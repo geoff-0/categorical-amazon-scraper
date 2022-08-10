@@ -36,12 +36,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 export default function traverseSubcategories(node, process, root) {
     return __awaiter(this, void 0, void 0, function () {
-        var key;
-        return __generator(this, function (_a) {
-            for (key in node) {
-                process.apply(this, [node[key], "".concat(root, "/").concat(key)]);
+        var _a, _b, _i, key;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    _a = [];
+                    for (_b in node)
+                        _a.push(_b);
+                    _i = 0;
+                    _c.label = 1;
+                case 1:
+                    if (!(_i < _a.length)) return [3 /*break*/, 4];
+                    key = _a[_i];
+                    return [4 /*yield*/, process.apply(this, [
+                            node[key],
+                            "".concat(root, "/").concat(key),
+                        ])];
+                case 2:
+                    _c.sent();
+                    _c.label = 3;
+                case 3:
+                    _i++;
+                    return [3 /*break*/, 1];
+                case 4: return [2 /*return*/];
             }
-            return [2 /*return*/];
         });
     });
 }

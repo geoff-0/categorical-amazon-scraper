@@ -5,6 +5,9 @@ export default async function traverseSubcategories(
 	root: string,
 ) {
 	for (let key in node) {
-		process.apply(this, [node[key as keyof typeof node], `${root}/${key}`]);
+		await process.apply(this, [
+			node[key as keyof typeof node],
+			`${root}/${key}`,
+		]);
 	}
 }
