@@ -21,7 +21,9 @@ export default async function getAsins(category: string, limit: number) {
 	const codes = await page.evaluate((limit) => {
 		let results: string[] = [];
 
-		const searchResults = document.body.querySelectorAll("div.s-result-item");
+		const searchResults = document.body.querySelectorAll(
+			"div.s-result-item div[data-asin]",
+		);
 
 		const l = searchResults.length - limit >= 0 ? limit : searchResults.length;
 

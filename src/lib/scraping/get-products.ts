@@ -5,7 +5,7 @@ import { Cluster } from "puppeteer-cluster";
 export default async function getProducts(asins: string[]) {
 	const cluster = await Cluster.launch({
 		concurrency: Cluster.CONCURRENCY_CONTEXT,
-		maxConcurrency: 35,
+		maxConcurrency: 5,
 	});
 
 	const getProduct = async (args: {
@@ -18,9 +18,9 @@ export default async function getProducts(asins: string[]) {
 			waitUntil: "networkidle2",
 		});
 
-		console.log("GET_PRODUCT", response?.status());
-
 		await page.waitForSelector("#productTitle");
+
+		console.log("GET_PRODUCT", response?.status());
 
 		const product = await page.evaluate((id) => {
 			const title: string = (
@@ -125,8 +125,6 @@ export default async function getProducts(asins: string[]) {
 			};
 		}, nanoid(6));
 
-		console.log(`ASIN: ${data.asin}`);
-		console.log(`TITLE: ${product.title}\n`);
 		data.products.push(product);
 	};
 
@@ -138,5 +136,5 @@ export default async function getProducts(asins: string[]) {
 	await cluster.idle();
 	await cluster.close();
 
-	return products;
+	return products.length;
 }
