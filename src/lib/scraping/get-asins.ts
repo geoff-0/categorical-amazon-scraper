@@ -22,8 +22,9 @@ export default async function getAsins(category: string, limit: number) {
 		let results: string[] = [];
 
 		const searchResults = document.body.querySelectorAll(
-			"div.s-result-item div[data-asin]",
+			'div[data-asin][data-component-type="s-search-result"]',
 		);
+
 
 		const l = searchResults.length - limit >= 0 ? limit : searchResults.length;
 

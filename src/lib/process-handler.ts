@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import getAsins from "./scraping/get-asins.js";
 import getProducts from "./scraping/get-products.js";
-import { productLimit } from "../../cas.config.js";
+import { productLimit } from "cas.config.js";
 import traverseSubcategories from "./traverse-subcategories.js";
 
 export default async function handleProcess(node: [] | {}, root: string) {

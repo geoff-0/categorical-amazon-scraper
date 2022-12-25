@@ -1,8 +1,8 @@
-import { categories } from "../cas.config.js";
+import config from "../cas.config.json";
 import generateData from "./lib/generate-data.js";
 
 (async () =>
 	await generateData(
-		categories,
+		config,
 		"/home/geoday/code/projects/categorical-amazon-scraper/src",
 	))();

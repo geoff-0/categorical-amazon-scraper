@@ -2,21 +2,18 @@
 	"compilerOptions": {
 		"target": "es5",
 		"lib": ["dom", "dom.iterable", "esnext"],
-		"allowJs": true,
+
 		"skipLibCheck": true,
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
 		"esModuleInterop": true,
-		"module": "esnext",
+		"module": "ESNext",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"baseUrl": "src",
-		"paths": {
-			"lib/*": ["lib/*"]
-		},
 		"incremental": true
 	},
-	"include": ["**/*.ts", "src", "cas.config.js"],
+	"include": ["**/*.ts", "./src/**/*", "./cas.config.js"],
 	"exclude": ["node_modules"]
 }
