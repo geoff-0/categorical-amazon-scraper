@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
 	categories: {
 		// amongUs: ["Among Us Dolls", "Among Us Toys"],
 		// electronics: [
@@ -16,3 +16,5 @@ module.exports = {
 	},
 	productLimit: 15,
 };
+
+export default config;

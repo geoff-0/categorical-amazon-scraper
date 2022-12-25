@@ -1,5 +1,7 @@
-import { categories, productLimit } from "../cas.config";
-import generateData from "./lib/generate-data.js";
+import config from "./cas.config";
+import generateData from "./lib/data-generation/generate-data";
+
+const { categories, productLimit } = config;
 
 (async () =>
 	await generateData(
