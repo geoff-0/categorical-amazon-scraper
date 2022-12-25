@@ -1,2 +1,5 @@
 /node_modules
-src/*js
+
+# output files
+src/*.js
+src/**.js
