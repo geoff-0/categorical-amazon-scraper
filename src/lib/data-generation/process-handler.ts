@@ -1,10 +1,13 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import getAsins from "./scraping/get-asins.js";
 import getProducts from "./scraping/get-products.js";
-import { productLimit } from "cas.config.js";
 import traverseSubcategories from "./traverse-subcategories.js";
 
-export default async function handleProcess(node: [] | {}, root: string) {
+export default async function handleProcess(
+	node: [] | {},
+	productLimit: number,
+	root: string,
+) {
 	if (
 		typeof (node !== null) &&
 		typeof (node === "object") &&
@@ -13,7 +16,7 @@ export default async function handleProcess(node: [] | {}, root: string) {
 		console.log(`object category of node: ${Object.keys(node)}`);
 		if (!existsSync(root)) mkdirSync(root);
 
-		await traverseSubcategories(node, handleProcess, root);
+		await traverseSubcategories(node, productLimit, handleProcess, root);
 	} else if (
 		typeof (node !== null) &&
 		typeof (node === "array") &&
