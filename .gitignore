@@ -2,4 +2,4 @@
 
 # output files
 src/*.js
-src/**.js
+src/**/*.js
