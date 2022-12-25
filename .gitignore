@@ -1,8 +1,7 @@
 /node_modules
 
 # output files
-src/*.js
-src/**/*.js
+/out
 
 # debug
 npm-debug.log*
