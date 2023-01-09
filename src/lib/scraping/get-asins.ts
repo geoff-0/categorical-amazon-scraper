@@ -5,15 +5,11 @@ export default async function getAsins(category: string, limit: number) {
 	const agent = new UserAgent({ deviceCategory: "desktop" }).toString();
 
 	const browser = await launch({
-		args: [agent, "--incognito"],
-		// headless: false,
+		args: [agent],
 	});
 
 	const page = await browser.newPage();
 
-	await page.setViewport({ width: 1280, height: 926 });
-
-	// Setting user agent passes check for anti-crawling
 	await page.setUserAgent(agent);
 
 	await page.goto("https://amazon.com");
