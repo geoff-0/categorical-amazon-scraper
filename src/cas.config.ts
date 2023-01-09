@@ -10,11 +10,11 @@ const config = {
 		// ],
 		jewelry: ["Jewelry", "Ring Pops"],
 		clothing: {
-			men: ["Men's jackets", "Men's Shirts", "Men's Pants"],
-			women: ["Women's jackets", "Women's Shirts", "Women's Pants"],
+			men: ["Men's jackets"],
+			// women: ["Women's jackets", "Women's Shirts", "Women's Pants"],
 		},
 	},
-	productLimit: 15,
+	productLimit: 10,
 };
 
 export default config;

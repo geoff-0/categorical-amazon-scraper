@@ -2,6 +2,7 @@
 
 # output files
 /out
+/build
 
 # debug
 npm-debug.log*

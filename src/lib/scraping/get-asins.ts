@@ -1,10 +1,10 @@
-import puppeteer from "puppeteer";
+import { launch } from "puppeteer";
 import UserAgent from "user-agents";
 
 export default async function getAsins(category: string, limit: number) {
 	const agent = new UserAgent({ deviceCategory: "desktop" }).toString();
 
-	const browser = await puppeteer.launch({
+	const browser = await launch({
 		args: ["--window-size=1920,1080", agent, "--incognito"],
 	});
 
@@ -18,19 +18,21 @@ export default async function getAsins(category: string, limit: number) {
 
 	console.log("GET_ASIN", res?.status());
 
-	const codes = await page.evaluate((limit) => {
+	const codes = await page.evaluate((limit: number) => {
 		let results: string[] = [];
 
 		const searchResults = document.body.querySelectorAll(
 			'div[data-asin][data-component-type="s-search-result"]',
 		);
 
-
-		const l = searchResults.length - limit >= 0 ? limit : searchResults.length;
+		const l =
+			searchResults.length - limit >= 0 ? limit : searchResults.length;
 
 		for (let i = 0; i < l; i++) {
-			const asin: string =
-				searchResults[i].getAttribute("data-asin") || "B08R25S1Q5";
+			const asin = searchResults[i].getAttribute(
+				"data-asin",
+			)
+				?? "B08R25S1Q5";
 
 			if (!results.includes(asin)) results.push(asin);
 		}
@@ -39,8 +41,6 @@ export default async function getAsins(category: string, limit: number) {
 	}, limit);
 
 	await browser.close();
-
-	console.log(`ASIN CODES LENGTH ${codes.length}`);
 
 	return codes;
 }
