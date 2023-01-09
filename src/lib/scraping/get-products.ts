@@ -1,4 +1,5 @@
 import { Cluster } from "puppeteer-cluster";
+import { Product } from "../types/product.js";
 import getProduct from "./product-worker.js";
 
 export default async function getProducts(
@@ -6,21 +7,24 @@ export default async function getProducts(
   productLimit: number
 ) {
   const cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_CONTEXT,
+    concurrency: Cluster.CONCURRENCY_BROWSER,
     maxConcurrency: productLimit,
   });
 
-  let products: {}[] = [];
+  let products: Product[] = [];
 
   await cluster.task(async ({ page, data: asin }) => {
-    const product = await getProduct(asin, page);
-    console.log(product);
+    const product = await getProduct({ asin: asin, page: page });
 
     products.push(product);
   });
 
   for (let asin of asins) {
-    await cluster.queue(asin);
+    try {
+      await cluster.execute(asin);
+    } catch (err: any) {
+      console.error(`ASIN ${asin} ERROR: ${err}`);
+    }
   }
 
   await cluster.idle();
