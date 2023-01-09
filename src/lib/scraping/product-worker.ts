@@ -6,6 +6,7 @@ export default async function getProduct({ asin, page }: getProductConfig) {
 	console.log(`https://amazon.com/dp/${asin}`);
 	const response = await page.goto(`https://amazon.com/dp/${asin}`, {
 		waitUntil: "domcontentloaded",
+		timeout: 0,
 	});
 
 	await page.waitForSelector(
