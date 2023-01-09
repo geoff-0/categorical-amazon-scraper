@@ -10,23 +10,27 @@ export default async function getProducts(props: {
 	const { category, asins, productLimit } = props;
 
 	const cluster = await Cluster.launch({
-		concurrency: Cluster.CONCURRENCY_CONTEXT,
-		maxConcurrency: 7,
+		concurrency: Cluster.CONCURRENCY_BROWSER,
+		maxConcurrency: 4,
+		monitor: true,
+		// puppeteerOptions: { headless: false },
 	});
 
 	let products: Product[] = [];
 
-	cluster.task(async ({ page, data: asin }) => {
-		const product = await getProduct({ asin: asin, page: page }).catch(
-			(err: any) => {
-				console.error(`${asin}-${category} ERROR: ${err}`);
-			},
-		);
+	await cluster.task(async ({ page, data: asin }) => {
+		const product = await getProduct({ asin: asin, page: page });
 
-		products.push(product);
+		products.push(Object.assign({ category: category }, product));
+	});
+
+	cluster.on("taskerror", (err, data) => {
+		console.log(`Error crawling ${data}: ${err.message}`);
 	});
 
 	for (let asin of asins) {
+		setTimeout(() => {}, 2000);
+
 		cluster.queue(asin);
 	}
 

@@ -8,6 +8,8 @@ export default async function getProduct({ asin, page }: getProductConfig) {
 		new UserAgent({ deviceCategory: "desktop" }).toString(),
 	);
 
+	await page.goto("https://amazon.com");
+
 	const response = await page.goto(`https://amazon.com/dp/${asin}`, {
 		waitUntil: "domcontentloaded",
 	});
@@ -16,14 +18,14 @@ export default async function getProduct({ asin, page }: getProductConfig) {
 		'#productTitle, img#landingImage, span.a-offscreen, #productDescription, #feature-bullets, div[data-hook="review"], div[data-feature-name="productFactsDesktop"], #reviewsMedley',
 	);
 
-	console.log(
-		`GET_PRODUCT ${response?.status()} https://amazon.com/dp/${asin}`,
-	);
+	// console.log(
+	// 	`GET_PRODUCT ${response?.status()} https://amazon.com/dp/${asin}\n`,
+	// );
 
 	page.on("console", async (msg) => {
 		const msgArgs = msg.args();
 		for (let i = 0; i < msgArgs.length; ++i) {
-			console.log(await msgArgs[i].jsonValue());
+			// console.log(await msgArgs[i].jsonValue());
 		}
 	});
 
@@ -89,21 +91,29 @@ export default async function getProduct({ asin, page }: getProductConfig) {
 
 		console.log(`DESCRIPTION: ${description}`);
 
-		const totalReviewCount = (
-			document.body.querySelector(
-				'[data-hook="total-review-count"]',
-			) as HTMLElement
-		).innerText;
+		const totalRatingsCount = document.body.querySelector(
+			'[data-hook="total-review-count"]',
+		)
+			? (
+					document.body.querySelector(
+						'[data-hook="total-review-count"]',
+					) as HTMLElement
+			  ).innerText
+			: "0";
 
-		const averageStarRating = `${
-			(
-				document.body.querySelector(
-					'[data-hook="average-star-rating"]',
-				) as HTMLElement
-			).innerText
-				.toString()
-				.split(" out of ")[0]
-		}/5`;
+		const averageStarRating = document.body.querySelector(
+			'[data-hook="average-star-rating"]',
+		)
+			? `${
+					(
+						document.body.querySelector(
+							'[data-hook="average-star-rating"]',
+						) as HTMLElement
+					).innerText
+						.toString()
+						.split(" out of ")[0]
+			  }/5`
+			: "No ratings";
 
 		const reviews = Array.from(
 			document.body.querySelectorAll('div[data-hook="review"]'),
@@ -182,7 +192,7 @@ export default async function getProduct({ asin, page }: getProductConfig) {
 			imageUrl: imageUrl,
 			price: price,
 			description: description,
-			totalReviewCount: totalReviewCount,
+			totalReviewCount: totalRatingsCount,
 			averageStarRating: averageStarRating,
 			reviews: reviews,
 		};
@@ -193,10 +203,10 @@ export default async function getProduct({ asin, page }: getProductConfig) {
 	return product;
 }
 
-const browser = await launch();
+// const browser = await launch();
 
-const page = await browser.newPage();
+// const page = await browser.newPage();
 
-await getProduct({ asin: "B0BBFLCPYW", page: page });
+// await getProduct({ asin: "B0BBFLCPYW", page: page });
 
-await browser.close();
+// await browser.close();
