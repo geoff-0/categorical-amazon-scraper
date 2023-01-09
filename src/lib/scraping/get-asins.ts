@@ -2,41 +2,44 @@ import { launch } from "puppeteer";
 import UserAgent from "user-agents";
 
 export default async function getAsins(category: string, limit: number) {
-  const agent = new UserAgent({ deviceCategory: "desktop" }).toString();
+	const agent = new UserAgent({ deviceCategory: "desktop" }).toString();
 
-  const browser = await launch({
-    args: ["--window-size=1920,1080", agent, "--incognito"],
-  });
+	const browser = await launch({
+		args: [agent],
+	});
 
-  const page = await browser.newPage();
+	const page = await browser.newPage();
 
-  const res = await page.goto(`https://amazon.com/s?k=${category}`, {
-    waitUntil: "networkidle2",
-  });
+	await page.setUserAgent(agent);
 
-  await page.waitForSelector("div.s-result-item");
+	const res = await page.goto(`https://amazon.com/s?k=${category}`, {
+		waitUntil: "domcontentloaded",
+	});
 
-  console.log("GET_ASIN", res?.status());
+	await page.waitForSelector("div.s-result-item", { timeout: 999999 });
 
-  const codes = await page.evaluate((limit: number) => {
-    let results: string[] = [];
+	console.log("GET_ASIN", res?.status());
 
-    const searchResults = document.body.querySelectorAll(
-      'div[data-asin][data-component-type="s-search-result"]'
-    );
+	const codes = await page.evaluate((limit: number) => {
+		let results: string[] = [];
 
-    const l = searchResults.length - limit >= 0 ? limit : searchResults.length;
+		const searchResults = document.body.querySelectorAll(
+			'div[data-asin][data-component-type="s-search-result"]',
+		);
 
-    for (let i = 0; i < l; i++) {
-      const asin = searchResults[i].getAttribute("data-asin") ?? "";
+		const l =
+			searchResults.length - limit >= 0 ? limit : searchResults.length;
 
-      if (!results.includes(asin)) results.push(asin);
-    }
+		for (let i = 0; i < l; i++) {
+			const asin = searchResults[i].getAttribute("data-asin") ?? "";
 
-    return results;
-  }, limit);
+			if (!results.includes(asin)) results.push(asin);
+		}
 
-  await browser.close();
+		return results;
+	}, limit);
 
-  return codes;
+	await browser.close();
+
+	return codes;
 }
