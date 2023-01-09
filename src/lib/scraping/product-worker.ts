@@ -9,7 +9,7 @@ export default async function getProduct({ asin, page }: getProductConfig) {
   });
 
   await page.waitForSelector(
-    '#productTitle, img#landingImage, span.a-offscreen, #productDescription, #feature-bullets, div[data-hook="review"], div[data-feature-name="productFactsDesktop"]'
+    '#productTitle, img#landingImage, span.a-offscreen, #productDescription, #feature-bullets, div[data-hook="review"], div[data-feature-name="productFactsDesktop"], #reviewsMedley'
   );
 
   console.log(`GET_PRODUCT ${asin}`, response?.status());
@@ -77,6 +77,22 @@ export default async function getProduct({ asin, page }: getProductConfig) {
 
     console.log(`DESCRIPTION: ${description}`);
 
+    const totalReviewCount = (
+      document.body.querySelector(
+        '[data-hook="total-review-count"]'
+      ) as HTMLElement
+    ).innerText;
+
+    const averageStarRating = `${
+      (
+        document.body.querySelector(
+          '[data-hook="average-star-rating"]'
+        ) as HTMLElement
+      ).innerText
+        .toString()
+        .split(" out of ")[0]
+    }/5`;
+
     const reviews = Array.from(
       document.body.querySelectorAll('div[data-hook="review"]')
     ).map((profile) => {
@@ -142,6 +158,8 @@ export default async function getProduct({ asin, page }: getProductConfig) {
       imageUrl: imageUrl,
       price: price,
       description: description,
+      totalReviewCount: totalReviewCount,
+      averageStarRating: averageStarRating,
       reviews: reviews,
     };
   }, nanoid(6));

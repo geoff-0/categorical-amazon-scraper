@@ -4,6 +4,8 @@ export type Product = {
   imageUrl: string;
   price: string;
   description: string;
+  totalReviewCount: string;
+  averageStarRating: string;
   reviews: {
     name: string;
     pictureUrl: string;
