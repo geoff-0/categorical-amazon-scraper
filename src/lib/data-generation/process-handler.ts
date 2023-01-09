@@ -31,7 +31,11 @@ export default async function handleProcess(
 				`CATEGORY ${category} ASIN CODES LENGTH ${asinCodes.length}\n`,
 			);
 
-			const products = await getProducts(asinCodes, productLimit);
+			const products = await getProducts({
+				category: category,
+				asins: asinCodes,
+				productLimit: productLimit,
+			});
 			console.log(`${category} PRODUCTS LENGTH ${products.length}\n`);
 
 			writeFileSync(
