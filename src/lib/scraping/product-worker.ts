@@ -77,7 +77,7 @@ export default async function getProduct({ asin, page }: getProductConfig) {
 
     console.log(`DESCRIPTION: ${description}`);
 
-    const totalReviewCount = (
+    const totalRatingCount = (
       document.body.querySelector(
         '[data-hook="total-review-count"]'
       ) as HTMLElement
@@ -158,7 +158,7 @@ export default async function getProduct({ asin, page }: getProductConfig) {
       imageUrl: imageUrl,
       price: price,
       description: description,
-      totalReviewCount: totalReviewCount,
+      totalReviewCount: totalRatingCount,
       averageStarRating: averageStarRating,
       reviews: reviews,
     };
