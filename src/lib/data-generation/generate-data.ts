@@ -7,7 +7,7 @@ export default async function generateData(
 	productLimit: number,
 	path: string,
 ) {
-	let root = `${path}/product_data`;
+	let root = `${path}/data/product_data`;
 	if (!existsSync(root)) mkdirSync(root);
 
 	traverseSubcategories(categories, productLimit, handleProcess, root);

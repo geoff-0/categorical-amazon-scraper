@@ -14,7 +14,7 @@ const config = {
 			// women: ["Women's Jackets", "Women's Shirts", "Women's Pants"],
 		},
 	},
-	productLimit: 48,
+	productLimit: 20,
 };
 
 export default config;

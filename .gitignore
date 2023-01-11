@@ -3,7 +3,7 @@
 # output files
 /out
 /build
-/src/product_data
+/data/product_data
 
 # debug
 npm-debug.log*
