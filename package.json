@@ -1,37 +1,30 @@
 {
-  "name": "categorical-amazon-scraper",
-  "version": "1.0.0",
-  "type": "module",
-  "description": "Amazon scraper that gets search results' product information",
-  "main": "src/index.js",
-  "directories": {
-    "src": "./src",
-    "lib": "./src/lib"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "gts lint",
-    "clean": "gts clean",
-    "check": "gts check",
-    "compile": "tsc",
-    "fix": "gts fix",
-    "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run lint"
-  },
-  "author": "geoday",
-  "license": "ISC",
-  "dependencies": {
-    "dotenv": "^16.0.3",
-    "nanoid": "^4.0.0",
-    "nodeenv": "^3.0.75",
-    "puppeteer": "^19.4.1",
-    "puppeteer-cluster": "^0.23.0"
-  },
-  "devDependencies": {
-    "@types/node": "^18.11.18",
-    "@types/user-agents": "^1.0.2",
-    "typescript": "^4.9.4",
-    "user-agents": "^1.0.1254"
-  }
+	"name": "categorical-amazon-scraper",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "Amazon scraper that gets search results' product information",
+	"main": "src/index.js",
+	"directories": {
+		"src": "./src",
+		"lib": "./src/lib"
+	},
+	"scripts": {
+		"start": "node build/src",
+		"compile": "tsc"
+	},
+	"author": "geoday",
+	"license": "ISC",
+	"dependencies": {
+		"dotenv": "^16.0.3",
+		"nanoid": "^4.0.0",
+		"nodeenv": "^3.0.75",
+		"puppeteer": "^19.4.1",
+		"puppeteer-cluster": "^0.23.0"
+	},
+	"devDependencies": {
+		"@types/node": "^18.11.18",
+		"@types/user-agents": "^1.0.2",
+		"typescript": "^4.9.4",
+		"user-agents": "^1.0.1254"
+	}
 }

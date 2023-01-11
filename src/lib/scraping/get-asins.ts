@@ -43,8 +43,6 @@ export default async function getAsins(category: string, limit: number) {
 			'div[data-asin][data-component-type="s-search-result"]',
 		);
 
-		const l =
-			searchResults.length - limit >= 0 ? limit : searchResults.length;
 
 		for (let i = 0; i < limit; i++) {
 			const asin = (
@@ -55,6 +53,14 @@ export default async function getAsins(category: string, limit: number) {
 
 			if (!results.includes(asin)) results.push(asin);
 		}
+
+		
+		if (searchResults.length < limit) {
+			limit -= searchResults.length
+
+
+		}
+
 
 		return results;
 	};
